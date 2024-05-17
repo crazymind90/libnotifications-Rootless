@@ -1,4 +1,5 @@
 ## libnotifications
+
  
 #### UPDATED : 
 Thanks to [@CokePokes](https://twitter.com/CokePokes) for this great tweak , 
@@ -24,4 +25,6 @@ This update needs [RocketBootStrap] we've already updated it,
 ## Releases : 
 [Releases](https://github.com/crazymind90/libnotifications-Rootless/releases/tag/tweak)
 
+
+Tested on arm64
 
