@@ -1,5 +1,0 @@
-#!/bin/bash
-
-/bin/launchctl unload /Library/LaunchDaemons/com.cokepokes.libnotificationd.plist
-
-exit 0
