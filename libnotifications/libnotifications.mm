@@ -9,16 +9,13 @@
 // CaptainHook by Ryan Petrich
 // see https://github.com/rpetrich/CaptainHook/
 
-#if TARGET_OS_SIMULATOR
-#error Do not support the simulator, please use the real iPhone Device.
-#endif
+ 
 
 #import <Foundation/Foundation.h>
-#import "CaptainHook/CaptainHook.h"
-#include <notify.h> // not required; for examples only
-#include <xpc/xpc.h>
-
-#import "NSDictionary+CDXPC.h"
+#include <dlfcn.h>
+#import <AppSupport/CPDistributedMessagingCenter.h>
+#import <rocketbootstrap/rocketbootstrap.h>
+ 
 
 #define CPLog(fmt, ...) NSLog((@"\e[4#1mCPNotification\e[m \E[3#2m[Line %d]:\e[m " fmt), __LINE__, ##__VA_ARGS__);
 
@@ -31,7 +28,7 @@
 @implementation CPNotification
 
 -(id)init {
-	if ((self = [super init])){}
+	if ((self = [super init])){ }
     return self;
 }
 
@@ -87,14 +84,13 @@
     
     [constructedDic setObject:@(NO) forKey:@"isHideAlert"];
     
-    xpc_connection_t client = xpc_connection_create_mach_service("com.cokepokes.libnotificationd",
-                                                                 NULL,
-                                                                 0);
-    xpc_connection_set_event_handler(client, ^(xpc_object_t event) {
-        CPLog(@"ERROR: xpc_connection_set_event_handler");
-    });
-    xpc_connection_resume(client);
-    xpc_connection_send_message(client, [(NSDictionary*)constructedDic.copy XPCObject]);
+    CPDistributedMessagingCenter *c = [CPDistributedMessagingCenter centerNamed:@"com.cokepokes.libnotificationd"];
+	if (!c || c == nil) {
+		return;
+	}
+
+	rocketbootstrap_distributedmessagingcenter_apply(c);
+	[c sendMessageAndReceiveReplyName:@"sendNotification" userInfo:(NSDictionary*)constructedDic.copy]; 
 }
 
 
@@ -109,17 +105,18 @@
 
     if (bundleId)
         [constructedDic setObject:bundleId forKey:@"bundleId"];
-    else
+    else { 
         return;
+    }
     
-    xpc_connection_t client = xpc_connection_create_mach_service("com.cokepokes.libnotificationd",
-                                                                 NULL,
-                                                                 0);
-    xpc_connection_set_event_handler(client, ^(xpc_object_t event) {
-        CPLog(@"ERROR: xpc_connection_set_event_handler");
-    });
-    xpc_connection_resume(client);
-    xpc_connection_send_message(client, [(NSDictionary*)constructedDic.copy XPCObject]);
+    CPDistributedMessagingCenter *c = [CPDistributedMessagingCenter centerNamed:@"com.cokepokes.libnotificationd"];
+	if (!c || c == nil) {
+		return;
+	}
+
+	rocketbootstrap_distributedmessagingcenter_apply(c);
+	[c sendMessageAndReceiveReplyName:@"hideNotification" userInfo:(NSDictionary*)constructedDic.copy]; 
+
 }
 
 @end
