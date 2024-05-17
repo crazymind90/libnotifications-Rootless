@@ -13,7 +13,7 @@ This update needs [RocketBootStrap] we've already updated it,
 
 
  
-#### Install by order : 
+#### Installation Steps (in order) : 
 
 - libSandy (Sileo)
 - ldid (Sileo)
