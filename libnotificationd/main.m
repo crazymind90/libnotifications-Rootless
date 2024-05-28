@@ -1,6 +1,6 @@
 //
 //  main.m
-//  libnotificationdaemon
+//  libnotificationdeaemon
 //
 //  Created by CokePokes on 8/3/19.
 //  Copyright (c) 2019 ___ORGANIZATIONNAME___. All rights reserved.
@@ -17,8 +17,8 @@
 #import <UserNotifications/UserNotifications.h>
 #import "Headers.h"
 #include <dlfcn.h>
-#import <AppSupport/CPDistributedMessagingCenter.h>
-#import <rocketbootstrap/rocketbootstrap.h>
+#import "../libxpcToolStrap.h"
+ 
 
 #define SYSTEM_VERSION_EQUAL_TO(v)                  ([[[objc_getClass("UIDevice") currentDevice] systemVersion] compare:v options:NSNumericSearch] == NSOrderedSame)
 #define SYSTEM_VERSION_GREATER_THAN(v)              ([[[objc_getClass("UIDevice") currentDevice] systemVersion] compare:v options:NSNumericSearch] == NSOrderedDescending)
@@ -27,22 +27,17 @@
 #define SYSTEM_VERSION_LESS_THAN_OR_EQUAL_TO(v)     ([[[objc_getClass("UIDevice") currentDevice] systemVersion] compare:v options:NSNumericSearch] != NSOrderedDescending)
 
 
-#define CPLog(fmt, ...) NSLog((@"\e[4#1mlibnotificationd\e[m \E[3#2m[Line %d]:\e[m " fmt), __LINE__, ##__VA_ARGS__);
+#define CPLog(fmt, ...) NSLog((@"\e[4#1mlibnotificationde\e[m \E[3#2m[Line %d]:\e[m " fmt), __LINE__, ##__VA_ARGS__);
 
 extern mach_port_t SBSSpringBoardServerPort();
 
 
+ 
+
+#define CLog(format, ...) NSLog(@"CM90~[D] : " format, ##__VA_ARGS__)
 
 
-@interface CPDistributedMessagingCenter (libnotifications_) 
-- (bool)doesServerExist;
-@end
-
-
-
-@interface libNotify : NSObject  {
-	CPDistributedMessagingCenter *_messagingCenter;
-}
+@interface libNotify : NSObject  
 
 -(void) sendNotification:(NSString *)a1 userInfo:(NSDictionary *)dic;
 -(void) hideNotification:(NSString *)a1 userInfo:(NSDictionary *)dic;
@@ -63,16 +58,7 @@ extern mach_port_t SBSSpringBoardServerPort();
 	dispatch_once(&once, ^{
 
 		sharedInstance = [[self alloc] init];
-
-		void *sandyHandle = dlopen("/var/jb/usr/lib/libsandy.dylib", RTLD_LAZY);
-          if (sandyHandle) {
-
-              int (*__dyn_libSandy_applyProfile)(const char *profileName) = (int (*)(const char *))dlsym(sandyHandle, "libSandy_applyProfile");
-              if (__dyn_libSandy_applyProfile) {
-                 __dyn_libSandy_applyProfile("libnotifications");
-              }
-		    }
-
+ 
 	});
 	return sharedInstance;
 }
@@ -81,25 +67,27 @@ extern mach_port_t SBSSpringBoardServerPort();
 {   
 
 	if ((self = [super init]))
-	{
-		_messagingCenter = [CPDistributedMessagingCenter centerNamed:@"com.cokepokes.libnotificationd"];
+	{   
 
-		if ([_messagingCenter doesServerExist]) {
-			return self;
-		}
+        void *sandyHandle = dlopen("/var/jb/usr/lib/libsandy.dylib", RTLD_LAZY);
+          if (sandyHandle) {
 
-		rocketbootstrap_distributedmessagingcenter_apply(_messagingCenter);
+            int (*__dyn_libSandy_applyProfile)(const char *profileName) = (int (*)(const char *))dlsym(sandyHandle, "libSandy_applyProfile");
+            if (__dyn_libSandy_applyProfile) {
 
-		[_messagingCenter runServerOnCurrentThread];
-
-		[_messagingCenter registerForMessageName:@"sendNotification" target:self selector:@selector(sendNotification:userInfo:)];
-        [_messagingCenter registerForMessageName:@"hideNotification" target:self selector:@selector(hideNotification:userInfo:)];
+                __dyn_libSandy_applyProfile("libnotifications");
+                __dyn_libSandy_applyProfile("xpcToolStrap");
+                 
+              }
+		    }
  
 	}
 	return self;
 }
 
 -(void) sendNotification:(NSString *)a1 userInfo:(NSDictionary *)dic {
+
+ 
     
     NSString *title = [dic objectForKey:@"title"];
     NSString *message = [dic objectForKey:@"message"];
@@ -407,11 +395,84 @@ extern mach_port_t SBSSpringBoardServerPort();
 
 @end 
 
+
+
+
+
 int main(int argc, char** argv, char** envp)
 {
 	@autoreleasepool
 	{
-		[libNotify load];
+		libNotify *libnoti = [libNotify sharedInstance];
+
+            void *sandyHandle = dlopen("/var/jb/usr/lib/libsandy.dylib", RTLD_LAZY);
+          if (sandyHandle) {
+
+              int (*__dyn_libSandy_applyProfile)(const char *profileName) = (int (*)(const char *))dlsym(sandyHandle, "libSandy_applyProfile");
+              if (__dyn_libSandy_applyProfile) {
+
+			     __dyn_libSandy_applyProfile("libnotifications");
+				 __dyn_libSandy_applyProfile("xpcToolStrap");
+
+
+ 
+
+
+		xpc_connection_t service = xpc_connection_create_mach_service("com.cokepokes.libnotificationde", NULL, XPC_CONNECTION_MACH_SERVICE_LISTENER);
+		if (!service) {
+			// HBLogDebugWeak(@"Failed to create XPC server. Exiting.");
+			return 0;
+		} else {
+                CLog(@"[+] Successfully created to com.cokepokes.libnotificationde as : [LISTENER]");
+        }
+
+		// Configure event handler
+		xpc_connection_set_event_handler(service, ^(xpc_object_t connection) {
+			xpc_type_t type = xpc_get_type(connection);
+			if (type == XPC_TYPE_CONNECTION) {
+                CLog(@"[+] Received a MSG on com.cokepokes.libnotificationde as : [PRIVILEGED]");
+				xpc_connection_set_event_handler(connection, ^(xpc_object_t message) {
+					if (xpc_get_type(message) == XPC_TYPE_DICTIONARY) {
+
+						int64_t idValue = xpc_dictionary_get_int64(message, "id");
+               			libnotificationde_MESSAGE_ID messageId = (libnotificationde_MESSAGE_ID)idValue;
+
+						switch (messageId) {
+							case libnotificationde_MESSAGE_SHOW_MSG: {
+								xpc_object_t userInfo = xpc_dictionary_get_value(message, "userInfo");
+                                NSDictionary *userInfoDict = convertXPCDictionaryToNSDictionary(userInfo);
+								[libnoti sendNotification:@"a" userInfo:userInfoDict];
+								break;
+							}
+							case libnotificationde_MESSAGE_HIDE_MSG: {
+								xpc_object_t userInfo = xpc_dictionary_get_value(message, "userInfo");
+                                NSDictionary *userInfoDict = convertXPCDictionaryToNSDictionary(userInfo);
+								[libnoti hideNotification:@"a" userInfo:userInfoDict];
+								break;
+							}
+						}
+					}
+				});
+				xpc_connection_resume(connection);
+			} else if (type == XPC_TYPE_ERROR) {
+				CLog(@"XPC server error: %s", xpc_dictionary_get_string(connection, XPC_ERROR_KEY_DESCRIPTION));
+			}
+		});
+
+		// Make connection live
+		xpc_connection_resume(service);
+
+
+
+
+
+
+
+
+
+
+              }
+		    }
 
 		NSRunLoop* runLoop = [NSRunLoop currentRunLoop];
 		for (;;)

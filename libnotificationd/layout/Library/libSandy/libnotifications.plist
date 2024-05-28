@@ -30,7 +30,7 @@
 				<key>extension_class</key>
 				<string>com.apple.security.exception.mach-lookup.global-name</string>
 				<key>mach_name</key>
-				<string>com.cokepokes.libnotificationd</string>
+				<string>com.cokepokes.libnotificationde</string>
 			</dict>
 			<dict>
 				<key>type</key>
@@ -38,7 +38,7 @@
 				<key>extension_class</key>
 				<string>com.apple.security.exception.mach-register.global-name</string>
 				<key>mach_name</key>
-				<string>com.cokepokes.libnotificationd</string>
+				<string>com.cokepokes.libnotificationde</string>
 			</dict>
 		</array>
 	</dict>

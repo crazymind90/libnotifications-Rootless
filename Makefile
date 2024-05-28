@@ -6,7 +6,7 @@ THEOS_PACKAGE_SCHEME=rootless
 
 export SDKVERSION = 14.5
 
-export iP = 192.168.1.102
+export iP = 192.168.1.103
 export Port = 22
 export Pass = alpine
 export Bundle = com.apple.springboard
@@ -16,12 +16,11 @@ include $(THEOS)/makefiles/common.mk
 export LIBRARY_NAME = libnotifications
 
 libnotifications_FILES = libnotifications/libnotifications.mm
-libnotifications_CFLAGS = -Wno-objc-designated-initializers  
+libnotifications_CFLAGS = -Wno-objc-designated-initializers -Wno-deprecated-declarations -Wno-unused-function
 libnotifications_CODESIGN_FLAGS = -Slibnotificationd/monkeydev.entitlements
 libnotifications_INSTALL_PATH = /usr/lib
 libnotifications_CFLAGS += -DXINA_SUPPORT
-libnotifications_LIBRARIES = MobileGestalt rocketbootstrap 
-libnotifications_PRIVATE_FRAMEWORKS = AppSupport CoreServices CoreTelephony SpringBoardServices
+libnotifications_PRIVATE_FRAMEWORKS = CoreServices CoreTelephony SpringBoardServices
 
 include $(THEOS_MAKE_PATH)/library.mk
 

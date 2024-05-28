@@ -1,6 +1,6 @@
 //
 //  Headers.h
-//  libnotificationdaemon
+//  libnotificationdeaemon
 //
 //  Created by CokePokes on 8/3/19.
 //  Copyright (c) 2019 ___ORGANIZATIONNAME___. All rights reserved.
@@ -8,6 +8,13 @@
 
 // XPC Service: Lightweight helper tool that performs work on behalf of an application.
 // see http://developer.apple.com/library/mac/#documentation/MacOSX/Conceptual/BPSystemStartup/Chapters/CreatingXPCServices.html
+
+
+
+
+
+
+
 
 @protocol LAPrearmContextXPC;
 @class LAClient, NSNumber, NSData, NSString;
