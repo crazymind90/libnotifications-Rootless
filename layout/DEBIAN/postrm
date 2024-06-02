@@ -1,5 +1,5 @@
 #!/bin/sh
-echo "Killing libnotificationde..."
-launchctl unload /var/jb/Library/LaunchDaemons/com.cokepokes.libnotificationde.plist
+echo "Killing libnotificationd..."
+launchctl unload /var/jb/Library/LaunchDaemons/com.cokepokes.libnotificationd.plist
 echo "Done!"
 exit 0

@@ -1,7 +1,7 @@
 Name: libnotifications
 Package: com.cokepokes.libnotifications
 Priority: optional
-Depends: firmware (>= 8.0), com.opa334.libsandy
+Depends: firmware (>= 8.0)
 Version: 0.3-6
 Architecture: iphoneos-arm64
 Description: App notification library.

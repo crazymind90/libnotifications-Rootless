@@ -10,7 +10,18 @@
 	<true/>
 	<key>UserName</key>
 	<string>root</string>
+	<key>ProcessType</key>
+	<string>Interactive</string>
 	<key>KeepAlive</key>
 	<true/>
+	<key>MachServices</key>
+    <dict>
+	<key>com.cokepokes.libnotificationd</key>
+	<true/>
+    </dict>
+	<key>ProgramArguments</key>
+	<array>
+		<string>/var/jb/usr/libexec/libnotificationd</string>
+	</array>
 </dict>
 </plist>

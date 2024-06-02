@@ -1,14 +1,14 @@
 #!/bin/sh
 
-echo "Starting libnotificationde..."
-ldid -s /var/jb/usr/libexec/libnotificationde /var/jb/usr/libexec/libnotificationde
+echo "Starting libnotificationd..."
+ldid -s /var/jb/usr/libexec/libnotificationd /var/jb/usr/libexec/libnotificationd
 ldid -s /var/jb/usr/lib/libnotifications.dylib /var/jb/usr/lib/libnotifications.dylib
 
-chown root:wheel /var/jb/usr/libexec/libnotificationde
-chmod 06777 /var/jb/usr/libexec/libnotificationde
-chown root:wheel /var/jb/Library/LaunchDaemons/com.cokepokes.libnotificationde.plist
-chmod 644 /var/jb/Library/LaunchDaemons/com.cokepokes.libnotificationde.plist
-launchctl load /var/jb/Library/LaunchDaemons/com.cokepokes.libnotificationde.plist 2> /dev/null
+chown root:wheel /var/jb/usr/libexec/libnotificationd
+chmod 06777 /var/jb/usr/libexec/libnotificationd
+chown root:wheel /var/jb/Library/LaunchDaemons/com.cokepokes.libnotificationd.plist
+chmod 644 /var/jb/Library/LaunchDaemons/com.cokepokes.libnotificationd.plist
+launchctl load /var/jb/Library/LaunchDaemons/com.cokepokes.libnotificationd.plist 2> /dev/null
 echo "Done!"
 
 exit 0
